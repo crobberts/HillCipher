@@ -1,0 +1,53 @@
+import argparse
+import sys
+
+def parseargs():
+    parser = argparse.ArgumentParser(add_help=True, prog = __file__, 
+                                     description='Convert a file to a sequence of integers')
+
+    parser.add_argument('--coding', choices=['alpha', 'ascii', 'binary'], default='ascii',
+                        help='Decoding mode: alpha for "A"-"Z" (radix 26), \
+                        ascii for any ASCII text (radix 128), \
+                        binary for any data (radix 256). Default is ascii.')
+    parser.add_argument('input', help='input file with integer sequence')
+    parser.add_argument('output', help='output file with decoded data', nargs='?')    
+    _parseargs = parser.parse_args()   
+    return _parseargs
+
+def decode_alpha(number):
+    if not number >= 0 and number < 26:
+        raise ValueError
+    return chr(ord('A') + number)
+
+def decode_ascii(number):
+    if not (number >= 0 and number < 128):
+        raise ValueError
+    return(chr(number))
+
+def decode_binary(number):
+    if not (number >= 0 and number < 256):
+        raise ValueError
+    return chr(number)
+
+def decode(decoder, input, output):
+    def optopen(outfile):
+        if outfile is None:
+            return sys.stdout
+        else:
+            return open(outfile, 'w+')
+
+    with open(input, 'r') as infile:
+        with optopen(output) as outfile:
+            try:
+                for line in infile.readlines():
+                    for number in line.split():
+                        outfile.write(decoder(int(number)))
+            except ValueError:
+                sys.stderr.write('Can\'t decode integer with value %d\n' % number)
+                
+decoders = {'alpha': decode_alpha, 'ascii': decode_ascii, 'binary': decode_binary}
+
+if __name__ == "__main__":
+    args = parseargs()
+    decode(decoders[args.coding], args.input, args.output)
+        

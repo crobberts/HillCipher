@@ -1,0 +1,76 @@
+#!/usr/bin/python
+
+import argparse
+import sys
+
+def parseargs():
+    parser = argparse.ArgumentParser(add_help=True, prog = __file__, 
+    description='Convert a file to a sequence of integers',
+    epilog='For help on a command, type \"%(prog)s command -h\"')
+
+    parser.add_argument('--coding', choices=['alpha', 'ascii', 'binary'], default='ascii', help='Encoding mode: alpha for "A"-"Z" (radix 26), ascii for any ascii text (radix 128), binary for any data (radix 256). Default is ascii.')
+    parser.add_argument('input', help='input file to convert')
+    parser.add_argument('output', help='output file with integer sequence')    
+    _parseargs = parser.parse_args()   
+    return _parseargs
+
+def decode_alpha(number):
+    assert number >= 0 and number < 26, "%d not valid alpha coding" + number
+    return chr(ord('A') + number)
+
+def decode_ascii(number):
+    assert number >= 0 and number < 128, "%d not valid ascii coding" + number
+    return(chr(number))
+
+def decode_binary(byte):
+    return str(ord(byte))
+
+def encode(encoder, input, output):
+    with open(input, 'rb') as infile:
+        with open(output, 'w+') as outfile:
+            delim = ''
+            try:
+                for byte in infile.read():
+                    outfile.write(delim)
+                    outfile.write(encoder(byte))
+                    delim = ' '
+                outfile.write('\n')
+            except ValueError:
+                print 'bad byte', ord(byte)
+                
+
+def encode_alpha(byte):
+    if byte.isspace():
+        return ''
+    if not (byte >= 'A' and byte <= 'Z'):
+        raise ValueError
+    return str(ord(byte) - ord('A'))
+
+def encode_ascii(byte):
+    if ord(byte) > 127:
+        raise ValueError
+    return str(ord(byte))
+
+def encode_binary(byte):
+    return str(ord(byte))
+
+def encode(encoder, input, output):
+    with open(input, 'rb') as infile:
+        with open(output, 'w+') as outfile:
+            delim = ''
+            try:
+                for byte in infile.read():
+                    outfile.write(delim)
+                    outfile.write(encoder(byte))
+                    delim = ' '
+                outfile.write('\n')
+            except ValueError:
+                sys.stderr.write('Can\'t encode data value %d\n' % ord(byte))
+                sys.exit(1)
+                
+encoders = {'alpha': encode_alpha, 'ascii': encode_ascii, 'binary': encode_binary}
+
+if __name__ == "__main__":
+    args = parseargs()
+    encode(encoders[args.coding], args.input, args.output)
+        

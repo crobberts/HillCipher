@@ -1,0 +1,66 @@
+The following files are included in this archive:
+
+key3-26.txt:
+A pre-generated key for block size 3 and radix 26.
+
+invkey3-26.txt:
+The corresponding inverse key.
+
+plain-alpha.txt:
+An example plaintext. To use the plaintext, first convert it
+to the internal format of HillCipher. The file is intended
+for alphabetic encoding. See ENCODING/DECODING below.
+
+cipher-alpha.txt:
+The corresponding ciphertext. This file also needs to be
+encoded first. See ENCODING/DECODING below.
+
+hillencode.py:
+A python script to encode a file, using a specified encoding.
+
+hilldecode.py:
+A python script decode a file, using a specified encoding.
+
+Makefile:
+A configuration file for the "make" program. Use this to create
+the archive that you submit. For example, to create "task1.zip",
+run "make task1.zip".
+
+ENCODING/DECODING
+
+Your programs are expected to handle input and output data in the
+format of sequnces of strings representing integers. The mapping from
+data to integers is defined by the coding scheme. For example, if the
+data is the text HELLO, it can be represented be as the following
+integer sequence using alpabetical coding:
+
+    7 4 11 11 14
+
+Here each integer represents the position in the alphabet of the
+letter in question.
+
+If you instead use ASCII coding, the integer sequence would be:
+
+    72 69 76 76 79
+
+Here an integer represents the ASCII code of a letter.
+
+Use the two scripts hillencode.py and hilldecode.py to convert between
+integers and data. For example, if the file "plain" contains the text
+"HELLO", you can convert it to integers with alphabetic coding by
+running the following program:
+
+% python hillencode.py --coding=alpha plain plain-alpha
+
+Now the file "plain-alpha" should contain the text "7 4 11 11 14".
+
+To convert it back, use the hilldecode.py script:
+
+% python hilldecode.py --coding=alpha plain-alpha plain2
+
+The content of "plain" and "plain2" should be identical.
+
+To use ASCII encoding instead, specify "--coding=ascii". This will
+work for any document with text in ASCII. There is also a binary
+encoding "--coding=binary" for encoding of any arbitrary binary
+document.
