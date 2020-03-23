@@ -185,22 +185,24 @@ class HillCipher {
     public static ArrayList<ArrayList<Integer>> matrixMultiply(ArrayList<ArrayList<Integer>> key, ArrayList<ArrayList<Integer>> msg, int radix) {
         ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
         int row = 0;
+        System.out.println(msg);
         while (row < key.get(0).size()) {
             int kl = 0;
             ArrayList<Integer> arr = new ArrayList<>();
-
-            while (kl <= msg.size()) {
+           
+            while (kl < msg.get(0).size()) {
                 ArrayList<Integer> columns = new ArrayList<Integer>();
 
+                System.out.println(msg.size());
                 for (int k = 0; k < msg.size(); k++) {
                     columns.add(msg.get(k).get(kl));
                 }
-
+            
                 int sum = 0;
                 for (int i = 0; i < key.size(); i++) {
                     sum += (key.get(row).get(i) * columns.get(i));
                 }
-
+               
                 arr.add(sum % radix);
                 kl++;
             }

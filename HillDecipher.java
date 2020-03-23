@@ -181,7 +181,7 @@ class HillDecipher {
             int kl = 0;
             ArrayList<Integer> arr = new ArrayList<>();
 
-            while (kl <= msg.size()) {
+            while (kl <= msg.get(0).size()) {
                 ArrayList<Integer> columns = new ArrayList<Integer>();
 
                 for (int k = 0; k < msg.size(); k++) {
